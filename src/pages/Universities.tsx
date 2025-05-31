@@ -21,16 +21,27 @@ export default function Universities() {
   const [universities, setUniversities] = useState([]);
 
   useEffect(() => {
-    fetch('/mock-data/universities.json')
+    fetch('http://localhost:5000/api/universities')
       .then((res) => res.json())
       .then((data) => setUniversities(data));
   }, []);
 
   const filteredUniversities = universities.filter(uni =>
-    uni.name.includes(searchTerm) ||
-    uni.location.includes(searchTerm) ||
-    uni.colleges.some(college => college.includes(searchTerm))
+    (uni.name && uni.name.includes(searchTerm)) ||
+    (uni.location && uni.location.includes(searchTerm)) ||
+    ((Array.isArray(uni.colleges) && uni.colleges.some(college => college.includes(searchTerm))) ||
+     (Array.isArray(uni.Colleges) && uni.Colleges.some(college => college.includes(searchTerm))))
   );
+
+  // إحصائيات واقعية من البيانات المفلترة فقط
+  const totalUniversities = filteredUniversities.length;
+  const totalColleges = filteredUniversities.reduce((sum, uni) => {
+    if (Array.isArray(uni.colleges) && uni.colleges.length > 0) return sum + uni.colleges.length;
+    if (Array.isArray(uni.Colleges) && uni.Colleges.length > 0) return sum + uni.Colleges.length;
+    return sum;
+  }, 0);
+  const totalTheses = filteredUniversities.reduce((sum, uni) => sum + (uni.thesesCount || 0), 0);
+  const avgEstablished = totalUniversities > 0 ? Math.round(filteredUniversities.reduce((sum, uni) => sum + (uni.established || 0), 0) / totalUniversities) : 0;
 
   return (
     <div className="space-y-6">
@@ -66,14 +77,14 @@ export default function Universities() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card className="research-card">
           <CardContent className="p-6 text-center">
-            <div className="text-2xl font-bold text-primary">{universities.length}</div>
+            <div className="text-2xl font-bold text-primary">{totalUniversities}</div>
             <p className="text-sm text-muted-foreground">إجمالي الجامعات</p>
           </CardContent>
         </Card>
         <Card className="research-card">
           <CardContent className="p-6 text-center">
             <div className="text-2xl font-bold text-green-600">
-              {universities.reduce((sum, uni) => sum + uni.collegesCount, 0)}
+              {totalColleges}
             </div>
             <p className="text-sm text-muted-foreground">إجمالي الكليات</p>
           </CardContent>
@@ -81,7 +92,7 @@ export default function Universities() {
         <Card className="research-card">
           <CardContent className="p-6 text-center">
             <div className="text-2xl font-bold text-orange-600">
-              {universities.reduce((sum, uni) => sum + uni.thesesCount, 0)}
+              {totalTheses}
             </div>
             <p className="text-sm text-muted-foreground">إجمالي الرسائل</p>
           </CardContent>
@@ -89,7 +100,7 @@ export default function Universities() {
         <Card className="research-card">
           <CardContent className="p-6 text-center">
             <div className="text-2xl font-bold text-purple-600">
-              {universities.length > 0 ? Math.round(universities.reduce((sum, uni) => sum + uni.established, 0) / universities.length) : 0}
+              {avgEstablished}
             </div>
             <p className="text-sm text-muted-foreground">متوسط سنة التأسيس</p>
           </CardContent>
@@ -152,11 +163,21 @@ export default function Universities() {
                 <div className="lg:col-span-2 space-y-4">
                   <h4 className="font-semibold text-right">الكليات التابعة</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {university.colleges.map((college, index) => (
-                      <div key={index} className="p-3 border rounded-lg bg-background/50">
-                        <div className="text-sm text-right">{college}</div>
-                      </div>
-                    ))}
+                    {Array.isArray(university.colleges) && university.colleges.length > 0 ? (
+                      university.colleges.map((college, index) => (
+                        <div key={index} className="p-3 border rounded-lg bg-background/50">
+                          <div className="text-sm text-right">{college}</div>
+                        </div>
+                      ))
+                    ) : Array.isArray(university.Colleges) && university.Colleges.length > 0 ? (
+                      university.Colleges.map((college, index) => (
+                        <div key={index} className="p-3 border rounded-lg bg-background/50">
+                          <div className="text-sm text-right">{college}</div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="col-span-2 text-center text-muted-foreground">لا توجد كليات مسجلة</div>
+                    )}
                   </div>
                 </div>
               </div>
