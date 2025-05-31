@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -18,84 +17,28 @@ import {
   Building
 } from 'lucide-react';
 
-const mockTheses = [
-  {
-    id: 1,
-    title: 'تطوير نظام ذكي لإدارة المعرفة في المؤسسات التعليمية باستخدام تقنيات الذكاء الاصطناعي',
-    author: 'د. أحمد محمد علي السالم',
-    degree: 'دكتوراه',
-    department: 'علوم الحاسوب',
-    university: 'جامعة الملك سعود',
-    college: 'كلية علوم الحاسوب والمعلومات',
-    year: 2024,
-    date: '2024-01-15',
-    status: 'مكتملة'
-  },
-  {
-    id: 2,
-    title: 'استخدام الذكاء الاصطناعي في التشخيص المبكر للأمراض السرطانية',
-    author: 'سارة أحمد الزهراني',
-    degree: 'ماجستير',
-    department: 'الطب',
-    university: 'جامعة الملك عبدالعزيز',
-    college: 'كلية الطب',
-    year: 2024,
-    date: '2024-01-10',
-    status: 'قيد المراجعة'
-  },
-  {
-    id: 3,
-    title: 'تحليل الأسواق المالية باستخدام تقنيات التعلم العميق والشبكات العصبية',
-    author: 'محمد عبدالله القحطاني',
-    degree: 'ماجستير',
-    department: 'إدارة الأعمال',
-    university: 'جامعة الإمام محمد بن سعود',
-    college: 'كلية الاقتصاد والعلوم الإدارية',
-    year: 2024,
-    date: '2024-01-08',
-    status: 'مكتملة'
-  },
-  {
-    id: 4,
-    title: 'تطوير منصة تعليمية تفاعلية للتعلم الإلكتروني في التعليم العالي',
-    author: 'فاطمة محمد الشمري',
-    degree: 'ماجستير',
-    department: 'تقنيات التعليم',
-    university: 'جامعة الملك سعود',
-    college: 'كلية التربية',
-    year: 2023,
-    date: '2023-12-20',
-    status: 'مكتملة'
-  },
-  {
-    id: 5,
-    title: 'أثر استخدام الواقع المعزز في تدريس العلوم على التحصيل الأكاديمي',
-    author: 'خالد عبدالرحمن العتيبي',
-    degree: 'دكتوراه',
-    department: 'المناهج وطرق التدريس',
-    university: 'جامعة الملك خالد',
-    college: 'كلية التربية',
-    year: 2023,
-    date: '2023-11-15',
-    status: 'مكتملة'
-  }
-];
-
 export default function Theses() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedDegree, setSelectedDegree] = useState('');
   const [selectedUniversity, setSelectedUniversity] = useState('');
   const [selectedYear, setSelectedYear] = useState('');
+  const [theses, setTheses] = useState([]);
 
-  const filteredTheses = mockTheses.filter(thesis => {
+  useEffect(() => {
+    fetch('/mock-data/theses.json')
+      .then((res) => res.json())
+      .then((data) => setTheses(data));
+  }, []);
+
+  const filteredTheses = theses.filter(thesis => {
     return (
       thesis.title.includes(searchTerm) ||
       thesis.author.includes(searchTerm) ||
       thesis.department.includes(searchTerm)
     ) &&
-    (selectedDegree === '' || thesis.degree === selectedDegree) &&
-    (selectedUniversity === '' || thesis.university === selectedUniversity) &&
-    (selectedYear === '' || thesis.year.toString() === selectedYear);
+    (selectedDegree === '' || selectedDegree === 'all' || thesis.degree === selectedDegree) &&
+    (selectedUniversity === '' || selectedUniversity === 'all' || thesis.university === selectedUniversity) &&
+    (selectedYear === '' || selectedYear === 'all' || thesis.year.toString() === selectedYear);
   });
 
   return (
@@ -133,7 +76,7 @@ export default function Theses() {
                 <SelectValue placeholder="الدرجة العلمية" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">جميع الدرجات</SelectItem>
+                <SelectItem value="all">جميع الدرجات</SelectItem>
                 <SelectItem value="ماجستير">ماجستير</SelectItem>
                 <SelectItem value="دكتوراه">دكتوراه</SelectItem>
               </SelectContent>
@@ -143,7 +86,7 @@ export default function Theses() {
                 <SelectValue placeholder="الجامعة" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">جميع الجامعات</SelectItem>
+                <SelectItem value="all">جميع الجامعات</SelectItem>
                 <SelectItem value="جامعة الملك سعود">جامعة الملك سعود</SelectItem>
                 <SelectItem value="جامعة الملك عبدالعزيز">جامعة الملك عبدالعزيز</SelectItem>
                 <SelectItem value="جامعة الإمام محمد بن سعود">جامعة الإمام محمد بن سعود</SelectItem>
@@ -155,7 +98,7 @@ export default function Theses() {
                 <SelectValue placeholder="السنة" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">جميع السنوات</SelectItem>
+                <SelectItem value="all">جميع السنوات</SelectItem>
                 <SelectItem value="2024">2024</SelectItem>
                 <SelectItem value="2023">2023</SelectItem>
                 <SelectItem value="2022">2022</SelectItem>
@@ -168,7 +111,7 @@ export default function Theses() {
       {/* عرض النتائج */}
       <div className="flex items-center justify-between">
         <p className="text-sm text-muted-foreground">
-          عرض {filteredTheses.length} رسالة من أصل {mockTheses.length}
+          عرض {filteredTheses.length} رسالة من أصل {theses.length}
         </p>
         <Button className="flex items-center gap-2">
           <Download className="w-4 h-4" />

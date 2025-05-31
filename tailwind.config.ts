@@ -19,6 +19,19 @@ export default {
 		},
 		extend: {
 			colors: {
+				stTropaz: {
+					50: '#f3f5fc',
+					100: '#e6ecf8',
+					200: '#c8d6ef',
+					300: '#98b3e1',
+					400: '#618ccf',
+					500: '#3d6dba',
+					600: '#2d56a0',
+					700: '#25447f',
+					800: '#223b6a',
+					900: '#213359',
+					950: '#16213b',
+				},
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',

@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -7,53 +6,27 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Search, Filter, Download, FileText } from 'lucide-react';
 
-const sampleTheses = [
-  {
-    id: 1,
-    title: 'تطوير نظام ذكي لإدارة المعرفة في المؤسسات التعليمية',
-    author: 'د. أحمد محمد علي',
-    department: 'علوم الحاسوب',
-    degree: 'دكتوراه',
-    year: '2024',
-    university: 'جامعة الملك سعود',
-    college: 'كلية علوم الحاسوب والمعلومات'
-  },
-  {
-    id: 2,
-    title: 'استخدام الذكاء الاصطناعي في التشخيص الطبي',
-    author: 'سارة أحمد الزهراني',
-    department: 'الطب',
-    degree: 'ماجستير',
-    year: '2023',
-    university: 'جامعة الملك عبدالعزيز',
-    college: 'كلية الطب'
-  },
-  {
-    id: 3,
-    title: 'تحليل الأسواق المالية باستخدام التعلم العميق',
-    author: 'محمد عبدالله القحطاني',
-    department: 'إدارة الأعمال',
-    degree: 'ماجستير',
-    year: '2024',
-    university: 'جامعة الإمام محمد بن سعود',
-    college: 'كلية إدارة الأعمال'
-  }
-];
-
 export default function Analytics() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedDegree, setSelectedDegree] = useState('');
   const [selectedYear, setSelectedYear] = useState('');
   const [selectedDepartment, setSelectedDepartment] = useState('');
+  const [theses, setTheses] = useState([]);
 
-  const filteredTheses = sampleTheses.filter(thesis => {
+  useEffect(() => {
+    fetch('/mock-data/theses.json')
+      .then((res) => res.json())
+      .then((data) => setTheses(data));
+  }, []);
+
+  const filteredTheses = theses.filter(thesis => {
     return (
       thesis.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       thesis.author.toLowerCase().includes(searchTerm.toLowerCase())
     ) &&
-    (selectedDegree === '' || thesis.degree === selectedDegree) &&
-    (selectedYear === '' || thesis.year === selectedYear) &&
-    (selectedDepartment === '' || thesis.department === selectedDepartment);
+    (selectedDegree === '' || selectedDegree === 'all' || thesis.degree === selectedDegree) &&
+    (selectedYear === '' || selectedYear === 'all' || thesis.year.toString() === selectedYear) &&
+    (selectedDepartment === '' || selectedDepartment === 'all' || thesis.department === selectedDepartment);
   });
 
   return (
@@ -90,7 +63,7 @@ export default function Analytics() {
                 <SelectValue placeholder="الدرجة العلمية" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">جميع الدرجات</SelectItem>
+                <SelectItem value="all">جميع الدرجات</SelectItem>
                 <SelectItem value="ماجستير">ماجستير</SelectItem>
                 <SelectItem value="دكتوراه">دكتوراه</SelectItem>
               </SelectContent>
@@ -101,7 +74,7 @@ export default function Analytics() {
                 <SelectValue placeholder="السنة" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">جميع السنوات</SelectItem>
+                <SelectItem value="all">جميع السنوات</SelectItem>
                 <SelectItem value="2024">2024</SelectItem>
                 <SelectItem value="2023">2023</SelectItem>
                 <SelectItem value="2022">2022</SelectItem>
@@ -113,7 +86,7 @@ export default function Analytics() {
                 <SelectValue placeholder="القسم" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">جميع الأقسام</SelectItem>
+                <SelectItem value="all">جميع الأقسام</SelectItem>
                 <SelectItem value="علوم الحاسوب">علوم الحاسوب</SelectItem>
                 <SelectItem value="الطب">الطب</SelectItem>
                 <SelectItem value="إدارة الأعمال">إدارة الأعمال</SelectItem>
