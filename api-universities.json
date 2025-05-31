@@ -1,0 +1,28 @@
+﻿
+
+StatusCode        : 200
+StatusDescription : OK
+Content           : [{"id":1,"name":"جامعة الملك سعود","location":"الر
+                    ياض","established":1957,"collegesCount":21,"theses
+                    Count":156,"website":"https://ksu.edu.sa","college
+                    s":[]},{"id":2,"name":"جامعة الملك 
+                    عبدالعزيز","loc...
+RawContent        : HTTP/1.1 200 OK
+                    Access-Control-Allow-Origin: *
+                    Connection: keep-alive
+                    Keep-Alive: timeout=5
+                    Content-Length: 5359
+                    Content-Type: application/json; charset=utf-8
+                    Date: Sat, 31 May 2025 12:30:50 GMT...
+Forms             : {}
+Headers           : {[Access-Control-Allow-Origin, *], [Connection, 
+                    keep-alive], [Keep-Alive, timeout=5], 
+                    [Content-Length, 5359]...}
+Images            : {}
+InputFields       : {}
+Links             : {}
+ParsedHtml        : mshtml.HTMLDocumentClass
+RawContentLength  : 5359
+
+
+

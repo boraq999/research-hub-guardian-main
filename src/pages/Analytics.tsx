@@ -14,7 +14,8 @@ export default function Analytics() {
   const [theses, setTheses] = useState([]);
 
   useEffect(() => {
-    fetch('/mock-data/theses.json')
+    // تعديل fetch لجلب الرسائل من API حقيقي
+    fetch('http://localhost:5000/api/theses')
       .then((res) => res.json())
       .then((data) => setTheses(data));
   }, []);

@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -14,67 +13,17 @@ import {
   GraduationCap
 } from 'lucide-react';
 
-const mockDepartments = [
-  {
-    id: 1,
-    name: 'علوم الحاسوب',
-    description: 'قسم علوم الحاسوب والمعلومات يهتم بتطوير التقنيات الحديثة والبرمجيات',
-    thesesCount: 45,
-    researchersCount: 12,
-    college: 'كلية علوم الحاسوب والمعلومات',
-    established: 2010
-  },
-  {
-    id: 2,
-    name: 'الطب',
-    description: 'قسم الطب يركز على البحوث الطبية والعلوم الصحية المتقدمة',
-    thesesCount: 67,
-    researchersCount: 23,
-    college: 'كلية الطب',
-    established: 1980
-  },
-  {
-    id: 3,
-    name: 'إدارة الأعمال',
-    description: 'قسم إدارة الأعمال يهتم بدراسة الاقتصاد والإدارة والأسواق المالية',
-    thesesCount: 34,
-    researchersCount: 8,
-    college: 'كلية الاقتصاد والعلوم الإدارية',
-    established: 1985
-  },
-  {
-    id: 4,
-    name: 'تقنيات التعليم',
-    description: 'قسم تقنيات التعليم يركز على تطوير طرق التدريس الحديثة والتعلم الإلكتروني',
-    thesesCount: 28,
-    researchersCount: 15,
-    college: 'كلية التربية',
-    established: 1995
-  },
-  {
-    id: 5,
-    name: 'المناهج وطرق التدريس',
-    description: 'قسم المناهج وطرق التدريس يهتم بتطوير المناهج التعليمية والأساليب التربوية',
-    thesesCount: 52,
-    researchersCount: 18,
-    college: 'كلية التربية',
-    established: 1975
-  },
-  {
-    id: 6,
-    name: 'الهندسة المدنية',
-    description: 'قسم الهندسة المدنية يركز على البحوث في البنية التحتية والعمارة المستدامة',
-    thesesCount: 39,
-    researchersCount: 14,
-    college: 'كلية الهندسة',
-    established: 1970
-  }
-];
-
 export default function Departments() {
   const [searchTerm, setSearchTerm] = useState('');
+  const [departments, setDepartments] = useState([]);
 
-  const filteredDepartments = mockDepartments.filter(dept =>
+  useEffect(() => {
+    fetch('http://localhost:5000/api/departments')
+      .then((res) => res.json())
+      .then((data) => setDepartments(data));
+  }, []);
+
+  const filteredDepartments = departments.filter(dept =>
     dept.name.includes(searchTerm) ||
     dept.description.includes(searchTerm) ||
     dept.college.includes(searchTerm)
@@ -114,14 +63,14 @@ export default function Departments() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="research-card">
           <CardContent className="p-6 text-center">
-            <div className="text-2xl font-bold text-primary">{mockDepartments.length}</div>
+            <div className="text-2xl font-bold text-primary">{departments.length}</div>
             <p className="text-sm text-muted-foreground">إجمالي الأقسام</p>
           </CardContent>
         </Card>
         <Card className="research-card">
           <CardContent className="p-6 text-center">
             <div className="text-2xl font-bold text-green-600">
-              {mockDepartments.reduce((sum, dept) => sum + dept.thesesCount, 0)}
+              {departments.reduce((sum, dept) => sum + dept.thesesCount, 0)}
             </div>
             <p className="text-sm text-muted-foreground">إجمالي الرسائل</p>
           </CardContent>
@@ -129,7 +78,7 @@ export default function Departments() {
         <Card className="research-card">
           <CardContent className="p-6 text-center">
             <div className="text-2xl font-bold text-orange-600">
-              {mockDepartments.reduce((sum, dept) => sum + dept.researchersCount, 0)}
+              {departments.reduce((sum, dept) => sum + dept.researchersCount, 0)}
             </div>
             <p className="text-sm text-muted-foreground">إجمالي الباحثين</p>
           </CardContent>
@@ -139,7 +88,7 @@ export default function Departments() {
       {/* عرض النتائج */}
       <div className="flex items-center justify-between">
         <p className="text-sm text-muted-foreground">
-          عرض {filteredDepartments.length} قسم من أصل {mockDepartments.length}
+          عرض {filteredDepartments.length} قسم من أصل {departments.length}
         </p>
       </div>
 
