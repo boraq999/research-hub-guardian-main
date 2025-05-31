@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -16,94 +15,18 @@ import {
   BookOpen
 } from 'lucide-react';
 
-const mockUniversities = [
-  {
-    id: 1,
-    name: 'جامعة الملك سعود',
-    location: 'الرياض',
-    established: 1957,
-    website: 'https://ksu.edu.sa',
-    collegesCount: 21,
-    thesesCount: 156,
-    colleges: [
-      'كلية علوم الحاسوب والمعلومات',
-      'كلية الطب',
-      'كلية الهندسة',
-      'كلية التربية',
-      'كلية الآداب'
-    ]
-  },
-  {
-    id: 2,
-    name: 'جامعة الملك عبدالعزيز',
-    location: 'جدة',
-    established: 1967,
-    website: 'https://kau.edu.sa',
-    collegesCount: 24,
-    thesesCount: 134,
-    colleges: [
-      'كلية الطب',
-      'كلية الهندسة',
-      'كلية الاقتصاد والإدارة',
-      'كلية العلوم',
-      'كلية الآداب والعلوم الإنسانية'
-    ]
-  },
-  {
-    id: 3,
-    name: 'جامعة الإمام محمد بن سعود الإسلامية',
-    location: 'الرياض',
-    established: 1953,
-    website: 'https://imamu.edu.sa',
-    collegesCount: 13,
-    thesesCount: 89,
-    colleges: [
-      'كلية الشريعة',
-      'كلية اللغة العربية',
-      'كلية أصول الدين',
-      'كلية العلوم الاجتماعية',
-      'كلية الاقتصاد والعلوم الإدارية'
-    ]
-  },
-  {
-    id: 4,
-    name: 'جامعة الملك خالد',
-    location: 'أبها',
-    established: 1998,
-    website: 'https://kku.edu.sa',
-    collegesCount: 18,
-    thesesCount: 76,
-    colleges: [
-      'كلية التربية',
-      'كلية الطب',
-      'كلية الهندسة',
-      'كلية العلوم',
-      'كلية الشريعة وأصول الدين'
-    ]
-  },
-  {
-    id: 5,
-    name: 'جامعة الملك فهد للبترول والمعادن',
-    location: 'الظهران',
-    established: 1963,
-    website: 'https://kfupm.edu.sa',
-    collegesCount: 7,
-    thesesCount: 92,
-    colleges: [
-      'كلية الهندسة',
-      'كلية العلوم',
-      'كلية علوم الحاسب والمعلومات',
-      'كلية إدارة الأعمال',
-      'كلية التصاميم البيئية'
-    ]
-  }
-];
-
 export default function Universities() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedUniversity, setSelectedUniversity] = useState(null);
+  const [universities, setUniversities] = useState([]);
 
-  const filteredUniversities = mockUniversities.filter(uni =>
+  useEffect(() => {
+    fetch('/mock-data/universities.json')
+      .then((res) => res.json())
+      .then((data) => setUniversities(data));
+  }, []);
+
+  const filteredUniversities = universities.filter(uni =>
     uni.name.includes(searchTerm) ||
     uni.location.includes(searchTerm) ||
     uni.colleges.some(college => college.includes(searchTerm))
@@ -143,14 +66,14 @@ export default function Universities() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card className="research-card">
           <CardContent className="p-6 text-center">
-            <div className="text-2xl font-bold text-primary">{mockUniversities.length}</div>
+            <div className="text-2xl font-bold text-primary">{universities.length}</div>
             <p className="text-sm text-muted-foreground">إجمالي الجامعات</p>
           </CardContent>
         </Card>
         <Card className="research-card">
           <CardContent className="p-6 text-center">
             <div className="text-2xl font-bold text-green-600">
-              {mockUniversities.reduce((sum, uni) => sum + uni.collegesCount, 0)}
+              {universities.reduce((sum, uni) => sum + uni.collegesCount, 0)}
             </div>
             <p className="text-sm text-muted-foreground">إجمالي الكليات</p>
           </CardContent>
@@ -158,7 +81,7 @@ export default function Universities() {
         <Card className="research-card">
           <CardContent className="p-6 text-center">
             <div className="text-2xl font-bold text-orange-600">
-              {mockUniversities.reduce((sum, uni) => sum + uni.thesesCount, 0)}
+              {universities.reduce((sum, uni) => sum + uni.thesesCount, 0)}
             </div>
             <p className="text-sm text-muted-foreground">إجمالي الرسائل</p>
           </CardContent>
@@ -166,7 +89,7 @@ export default function Universities() {
         <Card className="research-card">
           <CardContent className="p-6 text-center">
             <div className="text-2xl font-bold text-purple-600">
-              {Math.round(mockUniversities.reduce((sum, uni) => sum + uni.established, 0) / mockUniversities.length)}
+              {universities.length > 0 ? Math.round(universities.reduce((sum, uni) => sum + uni.established, 0) / universities.length) : 0}
             </div>
             <p className="text-sm text-muted-foreground">متوسط سنة التأسيس</p>
           </CardContent>
